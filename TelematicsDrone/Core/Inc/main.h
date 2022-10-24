@@ -29,6 +29,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
+#include "stm32f4xx_ll_spi.h"
 #include "stm32f4xx_ll_tim.h"
 #include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx_ll_rcc.h"
@@ -77,6 +78,20 @@ void Error_Handler(void);
 #define LED_3_GPIO_Port GPIOC
 #define BUZZER_TIMER_3_Pin LL_GPIO_PIN_1
 #define BUZZER_TIMER_3_GPIO_Port GPIOB
+#define BNO080_CS_Pin LL_GPIO_PIN_12
+#define BNO080_CS_GPIO_Port GPIOB
+#define BNO080_SCK_Pin LL_GPIO_PIN_13
+#define BNO080_SCK_GPIO_Port GPIOB
+#define BNO080_MISO_Pin LL_GPIO_PIN_14
+#define BNO080_MISO_GPIO_Port GPIOB
+#define BNO080_MOSI_Pin LL_GPIO_PIN_15
+#define BNO080_MOSI_GPIO_Port GPIOB
+#define BNO080_INT_Pin LL_GPIO_PIN_8
+#define BNO080_INT_GPIO_Port GPIOC
+#define BNO080_RST_Pin LL_GPIO_PIN_9
+#define BNO080_RST_GPIO_Port GPIOC
+#define BNO080_WAKE_Pin LL_GPIO_PIN_8
+#define BNO080_WAKE_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

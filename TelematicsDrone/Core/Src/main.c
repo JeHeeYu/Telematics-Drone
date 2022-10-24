@@ -18,13 +18,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "common.h"
+#include "sensor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,12 +91,17 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM3_Init();
   MX_USART6_UART_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   // Buzzer Timer Init
   LL_TIM_EnableCounter(TIM3);
 
   // USART Init
   LL_USART_EnableIT_RXNE(USART6);
+
+  // BNO080 Init
+  BNO080_Initialization();
+  BNO080_enableRotationVector(BNO080_ROTATION_VECTOR);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -104,6 +111,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  GetBNO080Data();
   }
   /* USER CODE END 3 */
 }
