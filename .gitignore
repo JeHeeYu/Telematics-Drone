@@ -1,0 +1,8 @@
+.settings/
+.metadata/
+
+Debug/
+
+
+*.launch
+*.ld
