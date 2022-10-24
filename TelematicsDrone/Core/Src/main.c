@@ -46,8 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern uint8_t uart6_rx_flag;
-extern uint8_t uart6_rx_data;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,6 +91,7 @@ int main(void)
   MX_TIM3_Init();
   MX_USART6_UART_Init();
   MX_SPI2_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   // Buzzer Timer Init
   LL_TIM_EnableCounter(TIM3);
@@ -99,9 +99,8 @@ int main(void)
   // USART Init
   LL_USART_EnableIT_RXNE(USART6);
 
-  // BNO080 Init
-  BNO080_Initialization();
-  BNO080_enableRotationVector(BNO080_ROTATION_VECTOR);
+  SensorInit();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
