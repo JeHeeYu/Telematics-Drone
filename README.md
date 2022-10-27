@@ -78,6 +78,14 @@ Shift한 값들을 비트 단위로 OR 연산 후 100으로 나누면 온도 단
 
 # GPS
 
+## NMEA(The National Marine Electronics Association) Protocol Data Format
+GPGGA(Global Positioning System Fix Data) : 시간, 위도, 경도, 고도 등 표시
+<br>
+GPGSV(GPS Satellites in View) : 현재 GPS Module이 수신할 수 있는 모든 위성의 정보
+<br>
+GPRMC(Recommended Minimum Data) : 추천되는 최소한의 데이터들
+<br>
+GPGSA(GNSS DOP and Active Satellite) : 데이터를 제공하는 위성들을 나열
 ## M8N UART Setting
 Mode : Asynchronous
 <br>
