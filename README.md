@@ -107,3 +107,29 @@ UART4_RX : PC11
 Driver : LL Driver
 <br>
 Interrupt : Receive Interrupt
+
+## UBX Protocol Message Frame Structure 
+<ol>
+  <li>SYNC CHAR1 : 0xB5(ASCII : 'u') 고정 값으로, 메시지 시작을 나타냄</li>
+  <li>SYNC CHAR2 : 0x62(ASCII : 'b') 고정 값으로, 메시지 시작을 나타냄</li>
+  <li>CLASS : 메시지의 종류를 나타내는 클래스</li>
+  <li>ID : 메시지의 클래스 ID</li>
+  <li>LENGTH Little Endian 1Byte : 실제 데이터(Payload)의 길이 LSB</li>
+  <li>LENGTH Little Endian 2Byte : 실제 데이터(Payload)의 길이 MSB</li>
+  <li>PAYLOAD : 메시지 정보가 담겨있는 데이터 (GPS 정보)</li>
+  <li>CK_A : Checksum A (에러 검출)</li>
+  <li>CK_B : Checksum B (에러 검출)</li>
+</ol>
+<img src="https://user-images.githubusercontent.com/87363461/198226740-ad1587e7-775e-45df-8c00-5ff5852941fc.JPG" height="500" width="700">
+
+### Checksum Example Code
+<pre>
+n : Checksum 계산할 바이트 크기
+buffer : 체크섬 계산할 필드의 데이터(Class, ID, Length , Payload)
+
+CK_A = 0, CK_B = 0
+for(int i = 0; i < n; i++) {
+    CK_A = CK_A + buffer[i];
+    CK_B = CK_B + CK_A
+}
+</pre>
