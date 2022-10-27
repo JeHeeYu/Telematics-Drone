@@ -102,6 +102,10 @@ void Error_Handler(void);
 #define BNO080_RST_GPIO_Port GPIOC
 #define BNO080_WAKE_Pin LL_GPIO_PIN_8
 #define BNO080_WAKE_GPIO_Port GPIOA
+#define M8N_TX_Pin LL_GPIO_PIN_10
+#define M8N_TX_GPIO_Port GPIOC
+#define M8N_RX_Pin LL_GPIO_PIN_11
+#define M8N_RX_GPIO_Port GPIOC
 #define LPS22HH_SCK_Pin LL_GPIO_PIN_3
 #define LPS22HH_SCK_GPIO_Port GPIOB
 #define LPS22HH_MISO_Pin LL_GPIO_PIN_4

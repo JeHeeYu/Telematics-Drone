@@ -5,6 +5,10 @@ float quatRadianAccuracy;
 
 void SensorInit()
 {
+#if DEBUG
+	printf("[%s] Start!\n", __func__);
+#endif
+
 	// BNO080 Sensor Init
 	BNO080_Initialization();
 	BNO080_enableRotationVector(BNO080_ROTATION_VECTOR);
@@ -14,10 +18,18 @@ void SensorInit()
 
 	// LPS2HH Sensor Init
 	LPS22HH_Initialization();
+
+#if DEBUG
+	printf("[%s] End!\n", __func__);
+#endif
 }
 
 void GetBNO080Data()
 {
+#if DEBUG
+	printf("[%s] Start!\n", __func__);
+#endif
+
 	if(BNO080_dataAvailable() == 1) {
 		q[0] = BNO080_getQuatI();
 		q[1] = BNO080_getQuatJ();
@@ -39,10 +51,18 @@ void GetBNO080Data()
 		LL_GPIO_SetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
+
+#if DEBUG
+	printf("[%s] End!\n", __func__);
+#endif
 }
 
 void GetICM20602Data()
 {
+#if DEBUG
+	printf("[%s] Start!\n", __func__);
+#endif
+
 	if(ICM20602_DataReady() == 1) {
 		ICM20602_Get3AxisGyroRawData(&ICM20602.gyro_x_raw);
 
@@ -62,10 +82,18 @@ void GetICM20602Data()
 		LL_GPIO_SetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
+
+#if DEBUG
+	printf("[%s] End!\n", __func__);
+#endif
 }
 
 void GetLPS22HHData()
 {
+#if DEBUG
+	printf("[%s] Start!\n", __func__);
+#endif
+
 	if(LPS22HH_DataReady() == 1) {
 		LPS22HH_GetPressure(&LPS22HH.pressure_raw);
 		LPS22HH_GetTemperature(&LPS22HH.temperature_raw);
@@ -88,4 +116,8 @@ void GetLPS22HHData()
 		LL_GPIO_SetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
+
+#if DEBUG
+	printf("[%s] End!\n", __func__);
+#endif
 }

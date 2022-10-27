@@ -18,10 +18,13 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+
 #include "main.h"
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "common.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,8 +44,15 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-uint8_t uart6_rx_flag = 0;
-uint8_t uart6_rx_data = 0;
+uint8_t uart6RXFlag = 0;
+uint8_t uart6RXData = 0;
+
+uint8_t uart4RXFlag = 0;
+uint8_t uart4RXData = 0;
+
+// 1메시지의 사이즈 배열
+uint8_t m8nRXData[36];
+uint8_t m8nRXCpltFlag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -200,17 +210,86 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles UART4 global interrupt.
+  */
+void UART4_IRQHandler(void)
+{
+  /* USER CODE BEGIN UART4_IRQn 0 */
+	static unsigned char cnt = 0;
+
+	if(LL_USART_IsActiveFlag_RXNE(UART4)) {
+
+		LL_USART_ClearFlag_RXNE(UART4);
+		uart4RXData = LL_USART_ReceiveData8(UART4);
+		uart4RXFlag = 1;
+
+		LL_USART_TransmitData8(USART6, uart4RXData);
+
+		/* 수신한 데이터 정보
+		 0 : SYNC_CHAR_1
+		 1 : SYNC_CHAR_2
+		 35 : Checksum
+		 default : Class, ID, Payload, Length 등
+		*/
+		switch(cnt) {
+		case 0:
+			if(uart4RXData == SYNC_CHAR_1) {
+				m8nRXData[cnt] = uart4RXData;
+				cnt++;
+			}
+			else {
+#if DEBUG
+				printf("[%s] SYNC_CHAR_1 Data is Not Same : %d\n", __func__, uart4RXData);
+#endif
+			}
+			break;
+		case 1:
+			if(uart4RXData == SYNC_CHAR_2) {
+				m8nRXData[cnt] = uart4RXData;
+				cnt++;
+			}
+			else {
+#if DEBUG
+				printf("[%s] SYNC_CHAR_2 Data is Not Same : %d\n", __func__, uart4RXData);
+#endif
+				cnt = 0;
+			}
+			break;
+		case 35:
+#if DEBUG
+			printf("[%s] Get Data is Checksum : %d", __func__, uart4RXData);
+#endif
+			m8nRXData[cnt] = uart4RXData;
+			cnt = 0;
+			m8nRXCpltFlag = 1;
+			break;
+
+		default:
+			m8nRXData[cnt] = uart4RXData;
+			cnt++;
+			break;
+		}
+	}
+
+  /* USER CODE END UART4_IRQn 0 */
+  /* USER CODE BEGIN UART4_IRQn 1 */
+
+  /* USER CODE END UART4_IRQn 1 */
+}
+
+/**
   * @brief This function handles USART6 global interrupt.
   */
 void USART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART6_IRQn 0 */
 	if(LL_USART_IsActiveFlag_RXNE(USART6)) {
-		// ?��?�� ?�� Flag Clear
+
 		LL_USART_ClearFlag_RXNE(USART6);
-		uart6_rx_data = LL_USART_ReceiveData8(USART6);
-		LL_USART_TransmitData8(USART6, uart6_rx_data);
-		uart6_rx_flag = 1;
+		uart6RXData = LL_USART_ReceiveData8(USART6);
+		uart6RXFlag = 1;
+
+		LL_USART_TransmitData8(UART4, uart6RXData);
 	}
   /* USER CODE END USART6_IRQn 0 */
   /* USER CODE BEGIN USART6_IRQn 1 */

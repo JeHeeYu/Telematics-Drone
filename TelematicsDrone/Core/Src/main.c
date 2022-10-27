@@ -93,12 +93,16 @@ int main(void)
   MX_SPI2_Init();
   MX_SPI1_Init();
   MX_SPI3_Init();
+  MX_UART4_Init();
   /* USER CODE BEGIN 2 */
   // Buzzer Timer Init
   LL_TIM_EnableCounter(TIM3);
 
-  // USART Init
+  // Debug USART Init
   LL_USART_EnableIT_RXNE(USART6);
+
+  // M8N UART Init
+  LL_USART_EnableIT_RXNE(UART4);
 
   SensorInit();
 
