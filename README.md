@@ -75,3 +75,27 @@ Shift한 값들을 비트 단위로 OR 연산 후 100으로 나누면 온도 단
 
 ## LPS22HH Data Plotter
 <img src="https://user-images.githubusercontent.com/87363461/198213027-3534ba12-ba8c-4729-a605-1f41b93899f7.JPG" width="600" height="200">
+
+# GPS
+
+## M8N UART Setting
+Mode : Asynchronous
+<br>
+Word Length : 8bits
+<br>
+Baud Rate : 9600bps
+<br>
+Parity : None
+<br>
+Stop Bits : 1bit
+
+## M8N Pin Configuration
+Channel : UART4
+<br>
+UART4_TX : PC10
+<br>
+UART4_RX : PC11
+<br>
+Driver : LL Driver
+<br>
+Interrupt : Receive Interrupt
