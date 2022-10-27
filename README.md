@@ -72,3 +72,6 @@ Shift한 값들을 비트 단위로 OR 연산 후 4096으로 나누면 기압 �
 읽은 데이터 중 하위 바이트는 그대로, 상위 바이트는 왼쪽으로 8 Shift
 <br>
 Shift한 값들을 비트 단위로 OR 연산 후 100으로 나누면 온도 단위 .C 값이 된다.
+
+## LPS22HH Data Plotter
+<img src="https://user-images.githubusercontent.com/87363461/198213027-3534ba12-ba8c-4729-a605-1f41b93899f7.JPG" width="600" height="200">
