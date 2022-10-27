@@ -2,6 +2,21 @@
 
 # LPS22HH 
 
+## LPS2HH Pin Configuration
+Channel : SPI3
+<br>
+SPI3_SCK : PB3
+<br>
+SPI3_MISO : PB4
+<br>
+SPI3_MOSI : PB5
+<br>
+GPIO_OUTPUT_CS : PB6
+<br>
+GPIO_INPUT_INT : PB7
+<br>
+Drive : LL Driver
+
 ## LPS22HH SPI Interface
 LPS22HH는 I2C, SPI, MIPI I3C 통신 3가지를 지원
 <br>
