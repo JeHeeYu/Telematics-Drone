@@ -92,6 +92,7 @@ int main(void)
   MX_USART6_UART_Init();
   MX_SPI2_Init();
   MX_SPI1_Init();
+  MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
   // Buzzer Timer Init
   LL_TIM_EnableCounter(TIM3);
@@ -111,6 +112,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  GetBNO080Data();
+	  GetICM20602Data();
+	  GetLPS22HHData();
   }
   /* USER CODE END 3 */
 }

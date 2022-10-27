@@ -5,10 +5,15 @@ float quatRadianAccuracy;
 
 void SensorInit()
 {
-	  BNO080_Initialization();
-	  BNO080_enableRotationVector(BNO080_ROTATION_VECTOR);
+	// BNO080 Sensor Init
+	BNO080_Initialization();
+	BNO080_enableRotationVector(BNO080_ROTATION_VECTOR);
 
-	  ICM20602_Initialization();
+	// ICM20602 Sensor Init
+	ICM20602_Initialization();
+
+	// LPS2HH Sensor Init
+	LPS22HH_Initialization();
 }
 
 void GetBNO080Data()
@@ -23,7 +28,7 @@ void GetBNO080Data()
 		Quaternion_Update(&q[0]);
 
 #if DEBUG
-		printf("[%s] Roll : %d, Pitch : %d, Yaw : %d\n", __func__, (int)BNO080_Roll * 100, (int)BNO080_Pitch, (int)BNO080_Yaw * 100);
+		printf("[%s] Roll : %d, Pitch : %d, Yaw : %d\n", __func__, (int)(BNO080_Roll * 100), (int)(BNO080_Pitch), (int)(BNO080_Yaw * 100));
 		LL_GPIO_ResetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
@@ -46,14 +51,40 @@ void GetICM20602Data()
 		ICM20602.gyro_z = ICM20602.gyro_z_raw * 2000 / 32768.f;
 
 #if DEBUG
-		printf("[%s] x : %d, y : %d, z : %d\n", __func__, (int)ICM20602.gyro_x, (int)ICM20602.gyro_y, (int)ICM20602.gyro_z);
+		printf("[%s] x : %d, y : %d, z : %d\n", __func__, (int)(ICM20602.gyro_x), (int)(ICM20602.gyro_y), (int)(ICM20602.gyro_z));
 		LL_GPIO_ResetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
 
 	else {
 #if DEBUG
-		printf("ICM20602 is Not Ready");
+		printf("ICM20602 is Not Ready\n");
+		LL_GPIO_SetOutputPin(GPIOC, LED_1_Pin);
+#endif
+	}
+}
+
+void GetLPS22HHData()
+{
+	if(LPS22HH_DataReady() == 1) {
+		LPS22HH_GetPressure(&LPS22HH.pressure_raw);
+		LPS22HH_GetTemperature(&LPS22HH.temperature_raw);
+
+		// 필터링 및 온도 보정 적용된 값
+		LPS22HH.baroAlt = getAltitude2(LPS22HH.pressure_raw / 4096.f, LPS22HH.temperature_raw / 100.f);
+
+		// IIR Filter 적용
+		LPS22HH.baroAltFilt = (LPS22HH.baroAltFilt * IIR_FILETER_VALUE) + (LPS22HH.baroAlt * (1.0f - IIR_FILETER_VALUE));
+
+#if DEBUG
+		printf("[%s] %d cm, %d cm\n", __func__, (int)(LPS22HH.baroAlt * 100), (int)(LPS22HH.baroAltFilt * 100));
+		LL_GPIO_ResetOutputPin(GPIOC, LED_1_Pin);
+#endif
+	}
+
+	else {
+#if DEBUG
+		printf("LPS22HH is Not Ready\n");
 		LL_GPIO_SetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
