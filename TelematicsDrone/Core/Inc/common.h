@@ -11,6 +11,7 @@
 #define LOW			0
 
 #define UBX_MESSAGE_LENGTH	36
+#define IBUS_MESSAGE_LENGTH	32
 
 #define SYNC_CHAR_1		0xb5
 #define SYNC_CHAR_2		0x62

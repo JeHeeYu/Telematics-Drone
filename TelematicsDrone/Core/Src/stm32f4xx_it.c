@@ -18,8 +18,6 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <stdio.h>
-
 #include "main.h"
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
@@ -47,12 +45,17 @@
 uint8_t uart6RXFlag = 0;
 uint8_t uart6RXData = 0;
 
+uint8_t uart5RXFlag = 0;
+uint8_t uart5RXData = 0;
+
 uint8_t uart4RXFlag = 0;
 uint8_t uart4RXData = 0;
 
-// 1메시지의 사이즈 배열
 uint8_t m8nRXData[36];
 uint8_t m8nRXCpltFlag = 0;
+
+uint8_t iBusRXData[32];
+uint8_t iBusRXCpltFlag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -225,11 +228,11 @@ void UART4_IRQHandler(void)
 
 		LL_USART_TransmitData8(USART6, uart4RXData);
 
-		/* 수신한 데이터 정보
+		/* ?��?��?�� ?��?��?�� ?���?
 		 0 : SYNC_CHAR_1
 		 1 : SYNC_CHAR_2
 		 35 : Checksum
-		 default : Class, ID, Payload, Length 등
+		 default : Class, ID, Payload, Length ?��
 		*/
 		switch(cnt) {
 		case 0:
@@ -278,6 +281,60 @@ void UART4_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles UART5 global interrupt.
+  */
+void UART5_IRQHandler(void)
+{
+	static unsigned char cnt = 0;
+
+  /* USER CODE BEGIN UART5_IRQn 0 */
+	if(LL_USART_IsActiveFlag_RXNE(UART5)) {
+
+		LL_USART_ClearFlag_RXNE(UART5);
+		uart5RXData = LL_USART_ReceiveData8(UART5);
+		uart5RXFlag = 1;
+
+		switch(cnt) {
+		case 0:
+			if(uart5RXData == 0x20) {
+				iBusRXData[cnt] = uart5RXData;
+				cnt++;
+			}
+			break;
+
+		case 1:
+			if(uart5RXData == 0x40) {
+				iBusRXData[cnt] = uart5RXData;
+				cnt++;
+			}
+			else {
+				cnt = 0;
+			}
+			break;
+
+		case 31:
+			iBusRXData[cnt] = uart5RXData;
+			cnt = 0;
+			iBusRXCpltFlag = 1;
+			break;
+
+		default:
+			iBusRXData[cnt] = uart5RXData;
+			cnt++;
+			break;
+		}
+
+		// 수신 버퍼가 비어 있는지 확인
+		while(!LL_USART_IsActiveFlag_TXE(USART6));
+		LL_USART_TransmitData8(USART6, uart5RXData);
+	}
+  /* USER CODE END UART5_IRQn 0 */
+  /* USER CODE BEGIN UART5_IRQn 1 */
+
+  /* USER CODE END UART5_IRQn 1 */
+}
+
+/**
   * @brief This function handles USART6 global interrupt.
   */
 void USART6_IRQHandler(void)
@@ -289,7 +346,9 @@ void USART6_IRQHandler(void)
 		uart6RXData = LL_USART_ReceiveData8(USART6);
 		uart6RXFlag = 1;
 
-		LL_USART_TransmitData8(UART4, uart6RXData);
+		// 수신 버퍼가 비어 있는지 확인
+//		while(!LL_USART_IsActiveFlag_TXE(USART6));
+//		LL_USART_TransmitData8(UART4, uart6RXData);
 	}
   /* USER CODE END USART6_IRQn 0 */
   /* USER CODE BEGIN USART6_IRQn 1 */

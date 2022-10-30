@@ -12,8 +12,8 @@
 int _write(int file, char* p, int len)
 {
 	for(int i = 0; i < len; i++) {
+		while(!LL_USART_IsActiveFlag_TXE(USART6));
 		LL_USART_TransmitData8(USART6, *(p + i));
-		HAL_Delay(1);
 	}
 
 	return len;

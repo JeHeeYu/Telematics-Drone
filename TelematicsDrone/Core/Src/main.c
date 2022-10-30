@@ -28,6 +28,7 @@
 #include "common.h"
 #include "sensor.h"
 #include "M8N.h"
+#include "FS-IA6B.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,6 +96,7 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI3_Init();
   MX_UART4_Init();
+  MX_UART5_Init();
   /* USER CODE BEGIN 2 */
   // Buzzer Timer Init
   LL_TIM_EnableCounter(TIM3);
@@ -105,8 +107,12 @@ int main(void)
   // M8N UART Init
   LL_USART_EnableIT_RXNE(UART4);
 
+  // FS-IA6B UART Init
+  LL_USART_EnableIT_RXNE(UART5);
+
   SensorInit();
   M8NInit();
+  FSIA6BUart5Init();
 
   /* USER CODE END 2 */
 

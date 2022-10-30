@@ -86,6 +86,13 @@ void M8NUART4Init()
 #endif
 }
 
+
+/**********************************************************************
+ * M8NInit
+ * Description : UBX UART Init 및 기본 데이터 전송
+ * Parameter : void
+ * Return : void
+***********************************************************************/
 void M8NInit()
 {
 #if DEBUG
