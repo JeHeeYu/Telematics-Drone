@@ -308,3 +308,6 @@ Clock Speed : 400000Hz
 Duty Cycle : Tlow / Thigh = 2
 <br>
 Driver : HAL Driver
+
+## AT24C08 Page Address
+<img src="https://user-images.githubusercontent.com/87363461/198865904-1bafba5c-fc0e-4887-99a4-648193d78fac.JPG" width="700" height="300">
