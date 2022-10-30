@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "common.h"
 #include "sensor.h"
+#include "M8N.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -105,6 +106,7 @@ int main(void)
   LL_USART_EnableIT_RXNE(UART4);
 
   SensorInit();
+  M8NInit();
 
   /* USER CODE END 2 */
 
@@ -118,6 +120,7 @@ int main(void)
 	  GetBNO080Data();
 	  GetICM20602Data();
 	  GetLPS22HHData();
+	  M8NGetUBXMessageSuccess();
   }
   /* USER CODE END 3 */
 }

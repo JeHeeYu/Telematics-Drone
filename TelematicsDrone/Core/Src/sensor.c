@@ -30,7 +30,7 @@ void GetBNO080Data()
 	printf("[%s] Start!\n", __func__);
 #endif
 
-	if(BNO080_dataAvailable() == 1) {
+	if(BNO080_dataAvailable() == HIGH) {
 		q[0] = BNO080_getQuatI();
 		q[1] = BNO080_getQuatJ();
 		q[2] = BNO080_getQuatK();
@@ -63,7 +63,7 @@ void GetICM20602Data()
 	printf("[%s] Start!\n", __func__);
 #endif
 
-	if(ICM20602_DataReady() == 1) {
+	if(ICM20602_DataReady() == HIGH) {
 		ICM20602_Get3AxisGyroRawData(&ICM20602.gyro_x_raw);
 
 		ICM20602.gyro_x = ICM20602.gyro_x_raw * 2000 / 32768.f;
@@ -94,7 +94,7 @@ void GetLPS22HHData()
 	printf("[%s] Start!\n", __func__);
 #endif
 
-	if(LPS22HH_DataReady() == 1) {
+	if(LPS22HH_DataReady() == HIGH) {
 		LPS22HH_GetPressure(&LPS22HH.pressure_raw);
 		LPS22HH_GetTemperature(&LPS22HH.temperature_raw);
 
