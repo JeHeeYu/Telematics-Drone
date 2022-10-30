@@ -206,3 +206,43 @@ Comparison : x8Faster than Standard PWM
 Pulse Period : 2Khz
 <br>
 pulse Width : 125us ~ 250us
+
+## ESC Pin Configuration
+Channel : TIM5
+<br>
+Count Period : 41999
+<br>
+Auto Reload Preload : Enable
+<br>
+Driver : LL Driver
+<br>
+<br>
+PWM1 : PA0
+<br>
+Pulse : 10500
+<br>
+Mode : Fast Mode
+
+<br>
+<br>
+PWM2 : PA1
+<br>
+Pulse : 21000
+<br>
+Mode : Fast Mode
+
+<br>
+<br>
+PWM3 : PA2
+<br>
+Pulse : 31500
+<br>
+Mode : Fast Mode
+
+<br>
+<br>
+PWM4 : PA3
+<br>
+Pulse : Non
+<br>
+Mode : Fast Mode
