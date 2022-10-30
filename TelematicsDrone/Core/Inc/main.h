@@ -70,6 +70,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define AT24C08_WP_Pin LL_GPIO_PIN_13
+#define AT24C08_WP_GPIO_Port GPIOC
 #define LED_1_Pin LL_GPIO_PIN_0
 #define LED_1_GPIO_Port GPIOC
 #define LED_2_Pin LL_GPIO_PIN_1
@@ -116,6 +118,10 @@ void Error_Handler(void);
 #define LPS22HH_CS_GPIO_Port GPIOB
 #define LPS22HH_INT_Pin LL_GPIO_PIN_7
 #define LPS22HH_INT_GPIO_Port GPIOB
+#define AT24C08_SCL_Pin LL_GPIO_PIN_8
+#define AT24C08_SCL_GPIO_Port GPIOB
+#define AT24C08_SDA_Pin LL_GPIO_PIN_9
+#define AT24C08_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

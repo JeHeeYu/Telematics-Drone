@@ -18,6 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
+#include "dma.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -30,6 +33,7 @@
 #include "M8N.h"
 #include "FS-IA6B.h"
 #include "motor.h"
+#include "eeprom.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +59,7 @@ extern IBusMessageStruct iBus;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void BNO080_Calibration(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -70,7 +74,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	float batteryVolt;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -91,6 +95,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM3_Init();
   MX_USART6_UART_Init();
   MX_SPI2_Init();
@@ -99,7 +104,13 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   MX_TIM5_Init();
+  MX_I2C1_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
+
+  // EEPROM Init
+  //EEPROMInit();
+
   // Buzzer Timer Init
   LL_TIM_EnableCounter(TIM3);
 
@@ -109,8 +120,7 @@ int main(void)
   LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH3);
   LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH4);
 
-
-
+  HAL_ADC_Start_DMA(&hadc1, &batteryVolt, 1);
 
   // Debug USART Init
   LL_USART_EnableIT_RXNE(USART6);
@@ -131,6 +141,7 @@ int main(void)
 	  HAL_Delay(1000);
 	  BuzzerOn(LOW);
   }
+
   if(iBus.SwC == 2000) {
 	  BuzzerOn(HIGH);
 	  HAL_Delay(1000);
@@ -148,8 +159,27 @@ int main(void)
 		  IsIBusReceived();
 	  }
   }
+  else if(iBus.SwC == 1500) {
+	  BNO080_Calibration();
 
-  while(GetIBusMessage() == LOW);
+	  // ESC Calibration Max Pulse Width
+	  	  TimerPulseSetting(21000);
+	  	  HAL_Delay(7000);
+
+	  	  // ESC Calibration Min Pulse Width
+	  	  TimerPulseSetting(10500);
+	  	  HAL_Delay(8000);
+
+	  	  while(iBus.SwC != 1000) {
+	  		  IsIBusReceived();
+	  	  }
+  }
+
+  else {
+	// ...
+  }
+
+  ICM20602GyroOffset();
 
   /* USER CODE END 2 */
 
@@ -215,7 +245,127 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void BNO080_Calibration(void)
+{
+	//Resets BNO080 to disable All output
+	BNO080_Initialization();
 
+	//BNO080/BNO085 Configuration
+	//Enable dynamic calibration for accelerometer, gyroscope, and magnetometer
+	//Enable Game Rotation Vector output
+	//Enable Magnetic Field output
+	BNO080_calibrateAll(); //Turn on cal for Accel, Gyro, and Mag
+	BNO080_enableGameRotationVector(20000); //Send data update every 20ms (50Hz)
+	BNO080_enableMagnetometer(20000); //Send data update every 20ms (50Hz)
+
+	//Once magnetic field is 2 or 3, run the Save DCD Now command
+  	printf("Calibrating BNO080. Pull up FS-i6 SWC to end calibration and save to flash\n");
+  	printf("Output in form x, y, z, in uTesla\n\n");
+
+	//while loop for calibration procedure
+	//Iterates until iBus.SwC is mid point (1500)
+	//Calibration procedure should be done while this loop is in iteration.
+	while(iBus.SwC == 1500)
+	{
+		if(BNO080_dataAvailable() == 1)
+		{
+			//Observing the status bit of the magnetic field output
+			float x = BNO080_getMagX();
+			float y = BNO080_getMagY();
+			float z = BNO080_getMagZ();
+			unsigned char accuracy = BNO080_getMagAccuracy();
+
+			float quatI = BNO080_getQuatI();
+			float quatJ = BNO080_getQuatJ();
+			float quatK = BNO080_getQuatK();
+			float quatReal = BNO080_getQuatReal();
+			unsigned char sensorAccuracy = BNO080_getQuatAccuracy();
+
+			printf("%f,%f,%f,", x, y, z);
+			if (accuracy == 0) printf("Unreliable\t");
+			else if (accuracy == 1) printf("Low\t");
+			else if (accuracy == 2) printf("Medium\t");
+			else if (accuracy == 3) printf("High\t");
+
+			printf("\t%f,%f,%f,%f,", quatI, quatI, quatI, quatReal);
+			if (sensorAccuracy == 0) printf("Unreliable\n");
+			else if (sensorAccuracy == 1) printf("Low\n");
+			else if (sensorAccuracy == 2) printf("Medium\n");
+			else if (sensorAccuracy == 3) printf("High\n");
+
+			//Turn the LED and buzzer on when both accuracy and sensorAccuracy is high
+			if(accuracy == 3 && sensorAccuracy == 3)
+			{
+				LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_0 | LL_GPIO_PIN_1 | LL_GPIO_PIN_2);
+				TIM3->PSC = 65000; //Very low frequency
+				LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+			}
+			else
+			{
+				LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_0 | LL_GPIO_PIN_1 | LL_GPIO_PIN_2);
+				LL_TIM_CC_DisableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+			}
+		}
+
+		IsIBusReceived(); //Refreshes iBus Data for iBus.SwC
+		HAL_Delay(100);
+	}
+
+	//Ends the loop when iBus.SwC is not mid point
+	//Turn the LED and buzzer off
+	LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_0 | LL_GPIO_PIN_1 | LL_GPIO_PIN_2);
+	LL_TIM_CC_DisableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+
+	//Saves the current dynamic calibration data (DCD) to memory
+	//Sends command to get the latest calibration status
+	BNO080_saveCalibration();
+	BNO080_requestCalibrationStatus();
+
+	//Wait for calibration response, timeout if no response
+	int counter = 100;
+	while(1)
+	{
+		if(--counter == 0) break;
+		if(BNO080_dataAvailable())
+		{
+			//The IMU can report many different things. We must wait
+			//for the ME Calibration Response Status byte to go to zero
+			if(BNO080_calibrationComplete() == 1)
+			{
+				printf("\nCalibration data successfully stored\n");
+				LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+				TIM3->PSC = 2000;
+				HAL_Delay(300);
+				TIM3->PSC = 1500;
+				HAL_Delay(300);
+				LL_TIM_CC_DisableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+				HAL_Delay(1000);
+				break;
+			}
+		}
+		HAL_Delay(10);
+	}
+	if(counter == 0)
+	{
+		printf("\nCalibration data failed to store. Please try again.\n");
+		LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+		TIM3->PSC = 1500;
+		HAL_Delay(300);
+		TIM3->PSC = 2000;
+		HAL_Delay(300);
+		LL_TIM_CC_DisableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+		HAL_Delay(1000);
+	}
+
+	//BNO080_endCalibration(); //Turns off all calibration
+	//In general, calibration should be left on at all times. The BNO080
+	//auto-calibrates and auto-records cal data roughly every 5 minutes
+
+	//Resets BNO080 to disable Game Rotation Vector and Magnetometer
+	//Enables Rotation Vector
+	BNO080_Initialization();
+	BNO080_enableRotationVector(2500); //Send data update every 2.5ms (400Hz)
+}
 /* USER CODE END 4 */
 
 /**

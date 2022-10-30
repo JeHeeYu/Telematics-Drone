@@ -3,6 +3,10 @@
 float q[4];
 float quatRadianAccuracy;
 
+short gyroXOffset = 3;
+short gyroYOffset = -25;
+short gyroZOffset = -3;
+
 void SensorInit()
 {
 #if DEBUG
@@ -40,7 +44,7 @@ void GetBNO080Data()
 		Quaternion_Update(&q[0]);
 
 #if DEBUG
-		printf("[%s] Roll : %d, Pitch : %d, Yaw : %d\n", __func__, (int)(BNO080_Roll * 100), (int)(BNO080_Pitch), (int)(BNO080_Yaw * 100));
+		printf("[%s] Roll : %.2f, Pitch : %.2f, Yaw : %.2f\n", __func__, BNO080_Roll, BNO080_Pitch, BNO080_Yaw * 100);
 		LL_GPIO_ResetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
@@ -82,6 +86,26 @@ void GetICM20602Data()
 		LL_GPIO_SetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
+
+#if DEBUG
+	printf("[%s] End!\n", __func__);
+#endif
+}
+
+void ICM20602GyroOffset()
+{
+#if DEBUG
+	printf("[%s] Start!\n", __func__);
+#endif
+
+	ICM20602_Writebyte(0x13, (gyroXOffset * -2) >> 8);
+	ICM20602_Writebyte(0x14, (gyroXOffset * -2));
+
+	ICM20602_Writebyte(0x15, (gyroYOffset * -2) >> 8);
+	ICM20602_Writebyte(0x16, (gyroYOffset * -2));
+
+	ICM20602_Writebyte(0x17, (gyroZOffset * -2) >> 8);
+	ICM20602_Writebyte(0x18, (gyroZOffset * -2));
 
 #if DEBUG
 	printf("[%s] End!\n", __func__);

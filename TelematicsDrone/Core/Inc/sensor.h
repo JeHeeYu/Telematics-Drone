@@ -20,6 +20,7 @@ extern float quatRadianAccuracy;
 void SensorInit();
 void GetBNO080Data();
 void GetICM20602Data();
+void ICM20602GyroOffset();
 void GetLPS22HHData();
 
 #endif /* INC_SENSOR_H_ */

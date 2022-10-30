@@ -45,11 +45,14 @@ void MX_GPIO_Init(void)
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOH);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOH);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+
+  /**/
+  LL_GPIO_SetOutputPin(AT24C08_WP_GPIO_Port, AT24C08_WP_Pin);
 
   /**/
   LL_GPIO_ResetOutputPin(GPIOC, LED_1_Pin|LED_2_Pin|LED_3_Pin|ICM20602_CS_Pin
@@ -62,8 +65,8 @@ void MX_GPIO_Init(void)
   LL_GPIO_ResetOutputPin(BNO080_WAKE_GPIO_Port, BNO080_WAKE_Pin);
 
   /**/
-  GPIO_InitStruct.Pin = LED_1_Pin|LED_2_Pin|LED_3_Pin|ICM20602_CS_Pin
-                          |BNO080_RST_Pin;
+  GPIO_InitStruct.Pin = AT24C08_WP_Pin|LED_1_Pin|LED_2_Pin|LED_3_Pin
+                          |ICM20602_CS_Pin|BNO080_RST_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
