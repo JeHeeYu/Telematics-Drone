@@ -222,7 +222,6 @@ PWM1 : PA0
 Pulse : 10500
 <br>
 Mode : Fast Mode
-
 <br>
 <br>
 PWM2 : PA1
@@ -230,7 +229,6 @@ PWM2 : PA1
 Pulse : 21000
 <br>
 Mode : Fast Mode
-
 <br>
 <br>
 PWM3 : PA2
@@ -238,7 +236,6 @@ PWM3 : PA2
 Pulse : 31500
 <br>
 Mode : Fast Mode
-
 <br>
 <br>
 PWM4 : PA3
