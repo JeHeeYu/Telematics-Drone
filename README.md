@@ -1,5 +1,25 @@
 # Drone FC Project
 
+# Development Environment
+OS : Windows10
+<br>
+IDE : STM32CUBEIDE
+<br>
+Language : C
+
+# Hardware
+MCU : STM32F405RGTX
+<br>
+9 Axis Sensor : BNO080
+<br>
+6 Axis Sensor : ICM20602
+<br>
+Temperature Pressure Sensor : LPS22HH
+<br>
+Receiver : FS-IA6B
+<br>
+EEPROM : AT24C08
+
 # LPS22HH 
 
 ## LPS2HH Pin Configuration
