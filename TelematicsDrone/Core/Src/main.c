@@ -54,6 +54,11 @@
 
 /* USER CODE BEGIN PV */
 extern IBusMessageStruct iBus;
+
+extern uint8_t uart1RxData;
+uint8_t telemetryTxData[20];
+
+extern timer7Flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,6 +111,8 @@ int main(void)
   MX_TIM5_Init();
   MX_I2C1_Init();
   MX_ADC1_Init();
+  MX_USART1_UART_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 
   // EEPROM Init
@@ -121,6 +128,13 @@ int main(void)
   LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH4);
 
   HAL_ADC_Start_DMA(&hadc1, &batteryVolt, 1);
+
+  // Telemetry UART
+  HAL_UART_Receive_IT(&huart1, &uart1RxData, 1);
+
+  // Global Timer
+  LL_TIM_EnableCounter(TIM7);
+  LL_TIM_EnableIT_UPDATE(TIM7);
 
   // Debug USART Init
   LL_USART_EnableIT_RXNE(USART6);
@@ -190,6 +204,52 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  if(timer7Flag == 1) {
+		  timer7Flag = 0;
+
+		  // SYNC_CHAR Header Data
+		  telemetryTxData[0] = 0x46;
+		  telemetryTxData[1] = 0x43;
+
+		  // ID
+		  telemetryTxData[2] = 0x10;
+
+		  // BNO080 Data
+		  telemetryTxData[3] = (short)(BNO080_Roll * 100);
+		  telemetryTxData[4] = ((short)(BNO080_Roll * 100)) >> 8;
+
+		  telemetryTxData[5] = (short)(BNO080_Pitch * 100);
+		  telemetryTxData[6] = ((short)(BNO080_Pitch * 100)) >> 8;
+
+		  telemetryTxData[7] = (unsigned short)(BNO080_Yaw * 100);
+		  telemetryTxData[8] = ((unsigned short)(BNO080_Yaw * 100)) >> 8;
+
+		  telemetryTxData[9] = (short)(LPS22HH.baroAltFilt * 10);
+		  telemetryTxData[10] = ((short)(LPS22HH.baroAltFilt * 10)) >> 8;
+
+		  telemetryTxData[11] = (short)((iBus.RH - 1500) * 0.1f * 100);
+		  telemetryTxData[12] = ((short)((iBus.RH - 1500) * 0.1f * 100)) >> 8;
+
+		  telemetryTxData[13] = (short)((iBus.RV - 1500) * 0.1f * 100);
+		  telemetryTxData[14] = ((short)((iBus.RV - 1500) * 0.1f * 100)) >> 8;
+
+		  telemetryTxData[15] = (unsigned short)((iBus.LH - 1000) * 0.36f * 100);
+		  telemetryTxData[16] = ((unsigned short)((iBus.LH - 1000) * 0.36f * 100)) >> 8;
+
+		  telemetryTxData[17] = 0x00;
+		  telemetryTxData[18] = 0x00;
+
+		  telemetryTxData[19] = 0xff;
+
+		  for(int i = 0; i < 19; i++) {
+			  telemetryTxData[19] = telemetryTxData[19] - telemetryTxData[i];
+		  }
+
+		  HAL_UART_Transmit_IT(&huart1, &telemetryTxData[0], 20);
+	  }
+
+
 	  GetBNO080Data();
 	  GetICM20602Data();
 	  GetLPS22HHData();
@@ -365,6 +425,15 @@ void BNO080_Calibration(void)
 	//Enables Rotation Vector
 	BNO080_Initialization();
 	BNO080_enableRotationVector(2500); //Send data update every 2.5ms (400Hz)
+}
+
+// Telematric Receive
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == USART1) {
+		HAL_UART_Receive_IT(&huart1, &uart1RxData, 1);
+	}
+
 }
 /* USER CODE END 4 */
 

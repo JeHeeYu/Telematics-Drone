@@ -56,6 +56,10 @@ uint8_t m8nRXCpltFlag = 0;
 
 uint8_t iBusRXData[32];
 uint8_t iBusRXCpltFlag = 0;
+
+uint8_t uart1RxData = 0;
+
+uint8_t timer7Flag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,6 +74,7 @@ uint8_t iBusRXCpltFlag = 0;
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
+extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -213,6 +218,20 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
+}
+
+/**
   * @brief This function handles UART4 global interrupt.
   */
 void UART4_IRQHandler(void)
@@ -228,7 +247,7 @@ void UART4_IRQHandler(void)
 
 		LL_USART_TransmitData8(USART6, uart4RXData);
 
-		/* ?��?��?�� ?��?��?�� ?���???
+		/* ?��?��?�� ?��?��?�� ?���????
 		 0 : SYNC_CHAR_1
 		 1 : SYNC_CHAR_2
 		 35 : Checksum
@@ -324,7 +343,7 @@ void UART5_IRQHandler(void)
 			break;
 		}
 
-		// ?��?�� 버퍼�?? 비어 ?��?���?? ?��?��
+		// ?��?�� 버퍼�??? 비어 ?��?���??? ?��?��
 		while(!LL_USART_IsActiveFlag_TXE(USART6));
 		LL_USART_TransmitData8(USART6, uart5RXData);
 	}
@@ -332,6 +351,31 @@ void UART5_IRQHandler(void)
   /* USER CODE BEGIN UART5_IRQn 1 */
 
   /* USER CODE END UART5_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM7 global interrupt.
+  */
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+
+	// timer 20ms count
+	static unsigned char count = 0;
+
+	if(LL_TIM_IsActiveFlag_UPDATE(TIM7)) {
+		LL_TIM_ClearFlag_UPDATE(TIM7);
+
+		count++;
+		if(count == 20) {
+			count = 0;
+			timer7Flag = 1;
+		}
+	}
+  /* USER CODE END TIM7_IRQn 0 */
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+
+  /* USER CODE END TIM7_IRQn 1 */
 }
 
 /**
@@ -360,7 +404,7 @@ void USART6_IRQHandler(void)
 		uart6RXData = LL_USART_ReceiveData8(USART6);
 		uart6RXFlag = 1;
 
-		// ?��?�� 버퍼�?? 비어 ?��?���?? ?��?��
+		// ?��?�� 버퍼�??? 비어 ?��?���??? ?��?��
 //		while(!LL_USART_IsActiveFlag_TXE(USART6));
 //		LL_USART_TransmitData8(UART4, uart6RXData);
 	}
