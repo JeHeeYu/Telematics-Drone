@@ -134,6 +134,52 @@ for(int i = 0; i < n; i++) {
 }
 </pre>
 
+
+# Receiver
+
+## FS-IA68 Pin Configuration
+Channel : UART5
+<br>
+UART5_TX : PC12
+<br>
+UART5_RX : PD2
+<br>
+Baud rate : 115200
+<br>
+Word Lengt : 8 Bits
+<br>
+Stop Bit : 1 bit
+<br>
+Driver : LL Driver
+<br>
+Interrupt : Receive Interrupt
+<br>
+Data Direction : Receive Only
+
+## i-bus Protocol Message Frame Structure 
+<ol>
+  <li>SYNC CHAR1 : 0x20 고정 값으로, 메시지 시작을 나타냄</li>
+  <li>SYNC CHAR2 : 0x40 고정 값으로, 메시지 시작을 나타냄</li>
+  <li>CH1 : CH1 데이터의 LSB</li>
+  <li>CH2 : CH1 데이터의 MSB</li>
+  <li>CH3 ~ 13 : 메시지 정보가 담겨있는 데이터</li>
+  <li>CHECKSUM : Checksum (에러 검출)</li>
+</ol>
+
+### Checksum Example Code
+<pre>
+Checksum : unsigned short
+n : Checksum 계산할 바이트 크기 (30 고정)
+buffer : 체크섬 계산할 필드의 데이터(Class, ID, Length , Payload)
+
+Checksum = 0xffff
+
+Loop(I M N) 
+{
+    Checksum = Cheksum - buffer[i];
+}
+</pre>
+
 # ESC protocol
 
 ## Dshot
