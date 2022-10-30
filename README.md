@@ -133,3 +133,122 @@ for(int i = 0; i < n; i++) {
     CK_B = CK_B + CK_A
 }
 </pre>
+
+
+# Receiver
+
+## FS-IA68 Pin Configuration
+Channel : UART5
+<br>
+UART5_TX : PC12
+<br>
+UART5_RX : PD2
+<br>
+Baud rate : 115200
+<br>
+Word Lengt : 8 Bits
+<br>
+Stop Bit : 1 bit
+<br>
+Driver : LL Driver
+<br>
+Interrupt : Receive Interrupt
+<br>
+Data Direction : Receive Only
+
+## i-bus Protocol Message Frame Structure 
+<ol>
+  <li>SYNC CHAR1 : 0x20 고정 값으로, 메시지 시작을 나타냄</li>
+  <li>SYNC CHAR2 : 0x40 고정 값으로, 메시지 시작을 나타냄</li>
+  <li>CH1 : CH1 데이터의 LSB</li>
+  <li>CH2 : CH1 데이터의 MSB</li>
+  <li>CH3 ~ 13 : 메시지 정보가 담겨있는 데이터</li>
+  <li>CHECKSUM : Checksum (에러 검출)</li>
+</ol>
+
+### Checksum Example Code
+<pre>
+Checksum : unsigned short
+n : Checksum 계산할 바이트 크기 (30 고정)
+buffer : 체크섬 계산할 필드의 데이터(Class, ID, Length , Payload)
+
+Checksum = 0xffff
+
+Loop(I M N) 
+{
+    Checksum = Cheksum - buffer[i];
+}
+</pre>
+
+# ESC protocol
+
+## Dshot
+디지털 전송 방식 중 하나로, Dshot150m Dshot300, Dshot600, Dshot1200 등이 있음
+<br>
+뒤에 숫자는 bitrate를 의미함
+<br>
+<br>
+ESC Calibration 작업이 필요 없이 디지털 값으로 0일 경우 모터 정지, 2047이면 최대 출력
+<br>
+각 비트마다 펄스의 폭으로 0과 1을 표현함
+
+## Proshot
+디지털 전송 방식 중 하나로 16bit의 Dshot 방식을 4개의 PWM Pulse 방식으로 표현함
+<br>
+각각의 Pulse는 Width에 따라 4bit(0 ~ 15)의 값을 표현
+
+## Oneshot125
+Duty Cycle : 125us ~ 250us(8kHz ~ 4kHz)
+<br>
+Comparison : x8Faster than Standard PWM
+<br>
+<br>
+Pulse Period : 2Khz
+<br>
+pulse Width : 125us ~ 250us
+
+## ESC Pin Configuration
+Channel : TIM5
+<br>
+Count Period : 41999
+<br>
+Auto Reload Preload : Enable
+<br>
+Driver : LL Driver
+<br>
+<br>
+PWM1 : PA0
+<br>
+Pulse : 10500
+<br>
+Mode : Fast Mode
+<br>
+<br>
+PWM2 : PA1
+<br>
+Pulse : 21000
+<br>
+Mode : Fast Mode
+<br>
+<br>
+PWM3 : PA2
+<br>
+Pulse : 31500
+<br>
+Mode : Fast Mode
+<br>
+<br>
+PWM4 : PA3
+<br>
+Pulse : Non
+<br>
+Mode : Fast Mode
+
+## Calibration 방법 
+<ol>
+<li>ESC Power Up</li>
+<li>PWM을 최대 Pulse Width으로 설정(Max Pulse Width 설정 이후 7초 이상 대기)</li>
+<li>PWM을 최소 Pulse Width으로 설정(MIN Pulse Width 설정 이후 8초 이상 대기)</li>
+<li>ESC Calibration 완료 및 PWM 인식</li>
+<li>Motor Ready</li>
+</ol>
