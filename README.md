@@ -243,3 +243,12 @@ PWM4 : PA3
 Pulse : Non
 <br>
 Mode : Fast Mode
+
+## Calibration 방법 
+<ol>
+<li>ESC Power Up</li>
+<li>PWM을 최대 Pulse Width으로 설정(Max Pulse Width 설정 이후 7초 이상 대기)</li>
+<li>PWM을 최소 Pulse Width으로 설정(MIN Pulse Width 설정 이후 8초 이상 대기)</li>
+<li>ESC Calibration 완료 및 PWM 인식</li>
+<li>Motor Ready</li>
+</ol>
