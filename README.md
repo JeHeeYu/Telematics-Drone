@@ -133,3 +133,30 @@ for(int i = 0; i < n; i++) {
     CK_B = CK_B + CK_A
 }
 </pre>
+
+# ESC protocol
+
+## Dshot
+디지털 전송 방식 중 하나로, Dshot150m Dshot300, Dshot600, Dshot1200 등이 있음
+<br>
+뒤에 숫자는 bitrate를 의미함
+<br>
+<br>
+ESC Calibration 작업이 필요 없이 디지털 값으로 0일 경우 모터 정지, 2047이면 최대 출력
+<br>
+각 비트마다 펄스의 폭으로 0과 1을 표현함
+
+## Proshot
+디지털 전송 방식 중 하나로 16bit의 Dshot 방식을 4개의 PWM Pulse 방식으로 표현함
+<br>
+각각의 Pulse는 Width에 따라 4bit(0 ~ 15)의 값을 표현
+
+## Oneshot125
+Duty Cycle : 125us ~ 250us(8kHz ~ 4kHz)
+<br>
+Comparison : x8Faster than Standard PWM
+<br>
+<br>
+Pulse Period : 2Khz
+<br>
+pulse Width : 125us ~ 250us
