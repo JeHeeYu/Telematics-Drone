@@ -29,6 +29,7 @@
 #include "sensor.h"
 #include "M8N.h"
 #include "FS-IA6B.h"
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +49,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern IBusMessageStruct iBus;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,9 +98,19 @@ int main(void)
   MX_SPI3_Init();
   MX_UART4_Init();
   MX_UART5_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   // Buzzer Timer Init
   LL_TIM_EnableCounter(TIM3);
+
+  // ESC Timer Init
+  LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH1);
+  LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH2);
+  LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH3);
+  LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH4);
+
+
+
 
   // Debug USART Init
   LL_USART_EnableIT_RXNE(USART6);
@@ -114,6 +125,32 @@ int main(void)
   M8NInit();
   FSIA6BUart5Init();
 
+  while(IsIBusReceived() == LOW)
+  {
+	  BuzzerOn(HIGH);
+	  HAL_Delay(1000);
+	  BuzzerOn(LOW);
+  }
+  if(iBus.SwC == 2000) {
+	  BuzzerOn(HIGH);
+	  HAL_Delay(1000);
+	  BuzzerOn(LOW);
+
+	  // ESC Calibration Max Pulse Width
+	  TimerPulseSetting(21000);
+	  HAL_Delay(7000);
+
+	  // ESC Calibration Min Pulse Width
+	  TimerPulseSetting(10500);
+	  HAL_Delay(8000);
+
+	  while(iBus.SwC != 1000) {
+		  IsIBusReceived();
+	  }
+  }
+
+  while(GetIBusMessage() == LOW);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -127,6 +164,7 @@ int main(void)
 	  GetICM20602Data();
 	  GetLPS22HHData();
 	  M8NGetUBXMessageSuccess();
+
   }
   /* USER CODE END 3 */
 }

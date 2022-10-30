@@ -136,7 +136,7 @@ void FSIA6BUart5Init()
 #endif
 }
 
-void GetIBusMessage()
+int GetIBusMessage()
 {
 #if DEBUG
 	printf("[%s] Start!\n", __func__);
@@ -146,16 +146,10 @@ void GetIBusMessage()
 		iBusRXCpltFlag = 0;
 		if(IBusCheckChecksum(&iBusRXData[0], IBUS_MESSAGE_LENGTH) == HIGH) {
 			IBusDataParsing(iBusRXData[0], &iBus);
-
-			// Check Faile Safe
-			if(IBusIsActiveFailSafe(&iBus) == HIGH) {
-				BuzzerOn(HIGH);
-			}
-			else {
-				BuzzerOn(LOW);
+			if(iBus.LV < 1010) {
+				return 1;
 			}
 
-			HAL_Delay(100);
 
 #if DEBUG
 			printf("[%s] RH : %d, RV : %d, LV : %d, LH : %d, SwA : %d, SwC : %d, SwD : %d, failSafe : %d\n", __func__, iBus.RH, iBus.RV, iBus.LV, iBus.LH, iBus.SwA, iBus.SwC, iBus.SwD, iBus.faileSafe);
@@ -169,6 +163,8 @@ void GetIBusMessage()
 		LL_GPIO_SetOutputPin(GPIOC, LED_1_Pin);
 #endif
 	}
+
+	return 0;
 
 #if DEBUG
 	printf("[%s] End!\n", __func__);
@@ -188,6 +184,35 @@ unsigned char IBusIsActiveFailSafe(IBusMessageStruct* iBus)
 #endif
 
 	return iBus->faileSafe != 0;
+
+#if DEBUG
+	printf("[%s] End!\n", __func__);
+#endif
+}
+
+
+/**********************************************************************
+ * IsIBusReceived
+ * Description : i-bus 데이터가 수신 되었는지 확인
+ * Parameter : void
+ * Return : 데이터가 정상적으로 수신 되었을 경우 1, 아니면 0
+***********************************************************************/
+int IsIBusReceived()
+{
+#if DEBUG
+	printf("[%s] Start!\n", __func__);
+#endif
+
+	if(iBusRXCpltFlag == HIGH) {
+		iBusRXCpltFlag = 0;
+		if(IBusCheckChecksum(&iBusRXData[0], IBUS_MESSAGE_LENGTH) == HIGH) {
+			IBusDataParsing(&iBusRXData[0], &iBus);
+
+			return 1;
+		}
+	}
+
+	return 0;
 
 #if DEBUG
 	printf("[%s] End!\n", __func__);

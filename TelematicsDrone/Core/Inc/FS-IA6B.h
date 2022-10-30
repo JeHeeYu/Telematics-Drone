@@ -27,5 +27,6 @@ extern IBusMessageStruct iBus;
 unsigned char IBusCheckChecksum(unsigned char* data, unsigned char length);
 void IBusDataParsing(unsigned char* data, IBusMessageStruct* ibus);
 void FSIA6BUart5Init();
-void GetIBusMessage();
+int GetIBusMessage();
 unsigned char IBusIsActiveFailSafe(IBusMessageStruct* iBus);
+int IsIBusReceived();

@@ -228,7 +228,7 @@ void UART4_IRQHandler(void)
 
 		LL_USART_TransmitData8(USART6, uart4RXData);
 
-		/* ?��?��?�� ?��?��?�� ?���?
+		/* ?��?��?�� ?��?��?�� ?���???
 		 0 : SYNC_CHAR_1
 		 1 : SYNC_CHAR_2
 		 35 : Checksum
@@ -285,9 +285,9 @@ void UART4_IRQHandler(void)
   */
 void UART5_IRQHandler(void)
 {
+  /* USER CODE BEGIN UART5_IRQn 0 */
 	static unsigned char cnt = 0;
 
-  /* USER CODE BEGIN UART5_IRQn 0 */
 	if(LL_USART_IsActiveFlag_RXNE(UART5)) {
 
 		LL_USART_ClearFlag_RXNE(UART5);
@@ -324,7 +324,7 @@ void UART5_IRQHandler(void)
 			break;
 		}
 
-		// 수신 버퍼가 비어 있는지 확인
+		// ?��?�� 버퍼�?? 비어 ?��?���?? ?��?��
 		while(!LL_USART_IsActiveFlag_TXE(USART6));
 		LL_USART_TransmitData8(USART6, uart5RXData);
 	}
@@ -346,7 +346,7 @@ void USART6_IRQHandler(void)
 		uart6RXData = LL_USART_ReceiveData8(USART6);
 		uart6RXFlag = 1;
 
-		// 수신 버퍼가 비어 있는지 확인
+		// ?��?�� 버퍼�?? 비어 ?��?���?? ?��?��
 //		while(!LL_USART_IsActiveFlag_TXE(USART6));
 //		LL_USART_TransmitData8(UART4, uart6RXData);
 	}
