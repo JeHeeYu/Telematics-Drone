@@ -252,3 +252,59 @@ Mode : Fast Mode
 <li>ESC Calibration 완료 및 PWM 인식</li>
 <li>Motor Ready</li>
 </ol>
+
+# EEPROM
+
+## AT24C08 Description
+<ul>
+<li>비휘발성 메모리</li>
+<li>AT24Cxx 뒤는 용량(kbits, 08 -> 8kbits = 1Kbytes)</li>
+<li>내부적으로 64개의 pages로 영역을 구분</li>
+<li>1page당 16bytes의 크기를 가짐</li>
+<li>I2C I/F를 지원</li>
+<li>쓰기 금지(WP) 핀 제공 (데이터 보호를 위함)</li>
+<li>AT24C04 이상 부터는 Page Write Mode로 Write할 때 16byte 단위로 써야 함</li>
+<li>내부 메모리 주소는 0번지 부터 1023번지 까지 존재</li>
+<li>내부 메모리 주소를 표현하기 위해 10bit 필요</li>
+</ul>
+
+## AT24C08 Pin Description
+A1, A0 : No Connects(or Connect to GND)
+<br>
+A2 : Device Address(Connect to VCC or GND)
+<br>
+SDA : I2C Serial Data
+<br>
+SCL : I2C Serial Clock
+<br>
+WP : Write Protection
+<br>
+ - High : Write Protection
+ - Low : Normal R/W Operation
+<br>
+<img src ="https://user-images.githubusercontent.com/87363461/198865457-355590aa-99cc-40f7-98c5-065d7e7106a0.JPG" width="700" height="500">
+
+## AT24C08 Device Address
+AT24C08의 경우 장치 주소를 표현하는 7비트 중 상위 5비트만 실제 장치 주소를 표현하는데 사용
+<br>
+AT24C08의 경우 8K의 크기를 가짐
+<br>
+<br>
+<img src="https://user-images.githubusercontent.com/87363461/198865613-5970c541-0302-4457-875b-8c201e18eee7.JPG" width="500" height="300">
+
+## AT24C08 Pin Configuration
+SCL : PB8
+<br>
+SDA : PB9
+<br>
+WP : PC13
+<br>
+Mode : I2C
+<br>
+Speed Mode : Fast Mode
+<br>
+Clock Speed : 400000Hz
+<br>
+Duty Cycle : Tlow / Thigh = 2
+<br>
+Driver : HAL Driver
