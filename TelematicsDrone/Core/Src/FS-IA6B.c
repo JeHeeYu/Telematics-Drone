@@ -136,6 +136,13 @@ void FSIA6BUart5Init()
 #endif
 }
 
+/**********************************************************************
+ * GetIBusMessage
+ * Description : I-Bus Interface로 얻은 Message 출력
+ * Parameter : void
+ * Return : 정상 수신 시 0, 아니면 1 Return
+***********************************************************************/
+
 int GetIBusMessage()
 {
 #if DEBUG

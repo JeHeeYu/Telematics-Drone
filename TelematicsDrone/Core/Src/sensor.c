@@ -7,6 +7,13 @@ short gyroXOffset = 3;
 short gyroYOffset = -25;
 short gyroZOffset = -3;
 
+/**********************************************************************
+ * SensorInit
+ * Description : 센서 Initialize
+ * Parameter : void
+ * Return : void
+***********************************************************************/
+
 void SensorInit()
 {
 #if DEBUG
@@ -27,6 +34,13 @@ void SensorInit()
 	printf("[%s] End!\n", __func__);
 #endif
 }
+
+/**********************************************************************
+ * GetBNO080Data
+ * Description : BNO080 센서 데이터 Get
+ * Parameter : void
+ * Return : void
+***********************************************************************/
 
 void GetBNO080Data()
 {
@@ -61,6 +75,13 @@ void GetBNO080Data()
 #endif
 }
 
+/**********************************************************************
+ * GetICM20602Data
+ * Description : ICM20602 센서 데이터 Get
+ * Parameter : void
+ * Return : void
+***********************************************************************/
+
 void GetICM20602Data()
 {
 #if DEBUG
@@ -92,6 +113,13 @@ void GetICM20602Data()
 #endif
 }
 
+/**********************************************************************
+ * ICM20602GyroOffset
+ * Description : ICM20602 x, y, z 값 Offset 추가
+ * Parameter : void
+ * Return : void
+***********************************************************************/
+
 void ICM20602GyroOffset()
 {
 #if DEBUG
@@ -111,6 +139,13 @@ void ICM20602GyroOffset()
 	printf("[%s] End!\n", __func__);
 #endif
 }
+
+/**********************************************************************
+ * GetLPS22HHData
+ * Description : LPS22HH 센서 데이터 Get
+ * Parameter : void
+ * Return : void
+***********************************************************************/
 
 void GetLPS22HHData()
 {
