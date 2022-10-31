@@ -173,49 +173,16 @@ int main(void)
 
 	ICM20602GyroOffset();
 
-
-	while(IsIBusReceived() == LOW)
-	{
+	if(BNO080_Initialization() != LOW) {
 		BuzzerOn(HIGH);
-		HAL_Delay(1000);
+
+		TIM3->PSC = 1000;
+		HAL_Delay(100);
+		TIM3->PSC = 1500;
+		HAL_Delay(100);
+		TIM3->PSC = 2000;
+		HAL_Delay(100);
 		BuzzerOn(LOW);
-	}
-
-	if(iBus.SwC == 2000) {
-		BuzzerOn(HIGH);
-		HAL_Delay(1000);
-		BuzzerOn(LOW);
-
-		// ESC Calibration Max Pulse Width
-		TimerPulseSetting(21000);
-		HAL_Delay(7000);
-
-		// ESC Calibration Min Pulse Width
-		TimerPulseSetting(10500);
-		HAL_Delay(8000);
-
-		while(iBus.SwC != 1000) {
-			IsIBusReceived();
-		}
-	}
-	else if(iBus.SwC == 1500) {
-		BNO080_Calibration();
-
-		// ESC Calibration Max Pulse Width
-		TimerPulseSetting(21000);
-		HAL_Delay(7000);
-
-		// ESC Calibration Min Pulse Width
-		TimerPulseSetting(10500);
-		HAL_Delay(8000);
-
-		while(iBus.SwC != 1000) {
-			IsIBusReceived();
-		}
-	}
-
-	else {
-		// ...
 	}
 
 	/* USER CODE END 2 */
@@ -271,11 +238,11 @@ int main(void)
 			}
 			else {
 				while(IsIBusReceived() == LOW || iBus.SwA == 2000) {
-					LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+					BuzzerOn(HIGH);
 
 					TIM3->PSC = 1000;
 					HAL_Delay(70);
-					LL_TIM_CC_DisableChannel(TIM3, LL_TIM_CHANNEL_CH4);
+					BuzzerOn(LOW);
 					HAL_Delay(70);
 				}
 			}
