@@ -23,7 +23,7 @@ EEPROM : AT24C08
 GPS Module : M8N
 
 # System Architecture
-<img src="https://user-images.githubusercontent.com/87363461/199010123-80b448c5-f368-4498-ba0b-e5b9ee581aae.png" width="800" height="600">
+<img src="https://user-images.githubusercontent.com/87363461/199011597-8ebdf1a8-be01-415b-904c-4d886468da79.png" width="800" height="600">
 
 # Pin Configuration
 <img src="https://user-images.githubusercontent.com/87363461/199010660-83e7dab2-8182-4c74-bebb-4f830b0c76e9.JPG" width="600" height="600">
