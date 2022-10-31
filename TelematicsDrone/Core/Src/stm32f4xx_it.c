@@ -57,9 +57,10 @@ uint8_t m8nRXCpltFlag = 0;
 uint8_t iBusRXData[32];
 uint8_t iBusRXCpltFlag = 0;
 
-uint8_t uart1RxData = 0;
+uint8_t uart1RXData = 0;
 
 uint8_t timer7Flag = 0;
+uint8_t timer7GlobalFlag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -363,6 +364,9 @@ void TIM7_IRQHandler(void)
 	// timer 20ms count
 	static unsigned char count = 0;
 
+	// timer 100ms count
+	static unsigned char globalCount = 0;
+
 	if(LL_TIM_IsActiveFlag_UPDATE(TIM7)) {
 		LL_TIM_ClearFlag_UPDATE(TIM7);
 
@@ -370,6 +374,12 @@ void TIM7_IRQHandler(void)
 		if(count == 20) {
 			count = 0;
 			timer7Flag = 1;
+		}
+
+		globalCount++;
+		if(globalCount == 100) {
+			globalCount = 0;
+			timer7GlobalFlag = 1;
 		}
 	}
   /* USER CODE END TIM7_IRQn 0 */
